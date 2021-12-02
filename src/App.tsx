@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { Stage, usePerformanceMark } from '@shopify/react-performance';
+import {apiHttpService} from './apiHttpService';
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    apiHttpService
+      .get('https://jsonplaceholder.typicode.com/todos/')
+      .finally(() => setIsLoading(false));
+  }, [])
+
+  usePerformanceMark(isLoading ? Stage.Usable : Stage.Complete, 'main-page');
+
   return (
     <div className="App">
       <header className="App-header">

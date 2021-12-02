@@ -2,16 +2,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { MetricsDebugOverlay, MetricsProvider } from '@cabify/prom-react';
+import { callConfig, customPromMetrics } from './constants';
+import OutsideCallConsumer from 'react-outside-call';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  <MetricsProvider
+    appName="jarvis"
+    owner="asserts"
+    metricsAggregatorUrl={
+      process.env.NODE_ENV === 'production' ? '<AGGREGATOR_URL>' : undefined
+    }
+    customMetrics={customPromMetrics}
+  >
+    <OutsideCallConsumer config={callConfig}>
+      <App />
+    </OutsideCallConsumer>
+    <MetricsDebugOverlay withLogger />
+  </MetricsProvider>,
+  document.getElementById('root'),
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
